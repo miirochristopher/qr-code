@@ -2,6 +2,8 @@
 
 A clean, lightweight **Streamlit application** for generating high-quality **325×325 pixel QR codes** from any URL, with instant PNG download support.
 
+# 1️⃣ Run locally (python environments)
+
 ---
 
 ## Requirements
@@ -33,8 +35,6 @@ Download from:
 https://www.python.org/downloads/
 
 ✔ Ensure Add Python to PATH is checked.
-
-### Build locally
 
 #### Clone Repository
 
@@ -122,13 +122,13 @@ pillow
 ## Build Docker Image
 
 ```bash
-docker build -t qr-code-generator .
+docker build -t intuvance/qr-code .
 ```
 
 ## Run Container
 
 ```bash
-docker run -p 8501:8501 qr-code-generator
+docker run -p 8501:8501 intuvance/qr-code
 ```
 
 ## Open:
@@ -138,10 +138,16 @@ http://localhost:8501
 # Optional: docker compose
 
 ```bash
-docker compose -p qr-code up --build
+docker compose -p qr-code up --build -d
 ```
 
-# Desktop App Wrapper
+## Cleanup
+
+```bash
+docker compose -p qr-code down -v
+```
+
+# 3️⃣ Desktop App Wrapper
 
 This creates a single executable that launches the Streamlit app like a desktop application.
 
@@ -151,7 +157,7 @@ This creates a single executable that launches the Streamlit app like a desktop 
 pyinstaller \
   --onefile \
   --windowed \
-  --name QR-Code-Generator \
+  --name QR-Code \
   desktop_launcher.py
 ```
 
@@ -159,7 +165,7 @@ pyinstaller \
 
 ```bash
 dist/
-└── QR-Code-Generator
+└── QR-Code
 ```
 
 `Double-click to launch, browser opens automatically no terminal window`

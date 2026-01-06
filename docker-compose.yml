@@ -1,0 +1,8 @@
+services:
+  qr-generator:
+    image: intuvance/qr-code:${TAG:-latest}
+    build: .
+    container_name: qr-code
+    ports:
+      - "8501:8501"
+    restart: unless-stopped

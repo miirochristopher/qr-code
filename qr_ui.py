@@ -1,18 +1,25 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox
-from PIL import Image, ImageTk
+import streamlit as st
 import qrcode
+from PIL import Image
+from io import BytesIO
 
-qr_image = None  
+st.set_page_config(
+    page_title="QR Code Generator",
+    page_icon="🔗",
+    layout="centered"
+)
 
-def generate_qr():
-    global qr_image
+st.title("🔗 QR Code Generator")
+st.caption("Generate a high-quality QR code from any link")
 
-    url = url_entry.get().strip()
-    if not url:
-        messagebox.showerror("Error", "Please enter a URL")
-        return
+st.divider()
 
+url = st.text_input(
+    "Enter URL",
+    placeholder="https://docs.google.com/..."
+)
+
+def generate_qr_image(link: str) -> Image.Image:
     qr = qrcode.QRCode(
         version=2,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -20,47 +27,43 @@ def generate_qr():
         border=4,
     )
 
-    qr.add_data(url)
+    qr.add_data(link)
     qr.make(fit=True)
 
-    qr_image = qr.make_image(fill_color="black", back_color="white")
+    img = qr.make_image(
+        fill_color="black",
+        back_color="white"
+    ).convert("RGB")
 
-    preview = qr_image.resize((220, 220))
-    photo = ImageTk.PhotoImage(preview)
+    img = img.resize((325, 325), Image.LANCZOS)
+    return img
 
-    qr_label.config(image=photo)
-    qr_label.image = photo  
 
-def save_qr():
-    if qr_image is None:
-        messagebox.showerror("Error", "Generate a QR code first")
-        return
+if st.button("Generate QR Code", use_container_width=True):
+    if not url.strip():
+        st.error("Please enter a valid URL")
+    else:
+        qr_image = generate_qr_image(url)
 
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".png",
-        filetypes=[("PNG Image", "*.png"), ("All Files", "*.*")]
-    )
+        st.success("QR Code generated successfully")
 
-    if file_path:
-        qr_image.save(file_path)
-        messagebox.showinfo("Saved", f"QR code saved to:\n{file_path}")
+        st.image(
+            qr_image,
+            caption="Preview (325 × 325)",
+            width=325
+        )
 
-root = tk.Tk()
-root.title("Google Docs QR Generator")
-root.geometry("420x420")
-root.resizable(False, False)
+        buffer = BytesIO()
+        qr_image.save(buffer, format="PNG")
+        buffer.seek(0)
 
-tk.Label(root, text="Google Docs URL", font=("Arial", 12)).pack(pady=10)
+        st.download_button(
+            label="⬇ Download QR Code",
+            data=buffer,
+            file_name="qr_code.png",
+            mime="image/png",
+            use_container_width=True
+        )
 
-url_entry = tk.Entry(root, width=55)
-url_entry.pack(pady=5)
-url_entry.insert(0, "")
-
-tk.Button(root, text="Generate QR Code", command=generate_qr).pack(pady=10)
-
-qr_label = tk.Label(root)
-qr_label.pack(pady=10)
-
-tk.Button(root, text="Save QR Code", command=save_qr).pack(pady=10)
-
-root.mainloop()
+st.divider()
+st.caption("Built with Streamlit • QR size: 325×325 px")

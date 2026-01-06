@@ -1,71 +1,165 @@
 # QR-CODE GENERATOR
 
-Install python3
+A clean, lightweight **Streamlit application** for generating high-quality **325×325 pixel QR codes** from any URL, with instant PNG download support.
 
-## For Debian/Ubuntu-based systems
+---
 
-```
+## Requirements
+
+- Python **3.8+**
+- pip
+- A modern web browser
+
+---
+
+## Install Python
+
+### Debian / Ubuntu / PopOS / Mint
+
+```bash
 sudo apt update
-sudo apt install python3 python3-venv
+sudo apt install python3 python3-venv python3-pip
 ```
 
-## Ubuntu / Debian / PopOS / Mint
+### Fedora
 
-```
-sudo apt update
-sudo apt install python3-tk
-```
-
-## For Fedora-based systems
-
-```
-sudo dnf install python3 python3-venv
+```bash
+sudo dnf install python3 python3-venv python3-pip
 ```
 
-## Clone this repository
+### Windows
 
-Create a virtual environment using the venv module. This command creates a new directory (commonly named .venv or env) that contains an isolated Python installation:
+Download from:
+https://www.python.org/downloads/
 
-```
+✔ Ensure Add Python to PATH is checked.
+
+### Build locally
+
+#### Clone Repository
+
+```bash
+git clone https://github.com/miirochristopher/qr-code.git
 cd qr-code
+```
 
+#### Create Virtual Environment
+
+```bash
 python3 -m venv .venv
 ```
 
-## Activate the virtual environment.
-
-```
-source .venv/bin/activate
-```
-
-## Install packages using pip.
-
-The packages will be installed into your isolated environment, not the system's Python:
-
-```
-pip install qrcode[pil]
-
-python -m pip install qrcode[pil] pillow
-```
-
-## Run the application
-
-Windows
-
-```
-python qr_ui.py
-```
+#### Activate Environment
 
 Linux / macOS
 
-```
-python3 qr_ui.py
+```bash
+source .venv/bin/activate
 ```
 
-## Deactivate the environment when you are finished working on the project.
+#### Windows (PowerShell)
 
-This returns your shell to the normal system Python environment:
-
+```bash
+.venv\Scripts\Activate.ps1
 ```
+
+#### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Run the Application
+
+```bash
+streamlit run qr_ui.py
+```
+
+Open the displayed URL (usually http://localhost:8501).
+
+### Features
+
+```bash
+URL → QR Code
+
+Fixed output size: 325 × 325 px
+
+High error correction
+
+Browser-based UI
+
+One-click PNG download
+
+Cross-platform
+
+Docker Support
+
+See Docker Setup section below.
+
+Desktop App
+
+This app can be packaged as a desktop executable using PyInstaller (see below).
+```
+
+### Deactivate Environment
+
+```bash
 deactivate
 ```
+
+---
+
+# 2️⃣ Docker Setup (Dockerize Steps)
+
+## `requirements.txt`
+
+```txt
+streamlit
+qrcode[pil]
+pillow
+```
+
+## Build Docker Image
+
+```bash
+docker build -t qr-code-generator .
+```
+
+## Run Container
+
+```bash
+docker run -p 8501:8501 qr-code-generator
+```
+
+## Open:
+
+http://localhost:8501
+
+# Optional: docker compose
+
+```bash
+docker compose -p qr-code up --build
+```
+
+# Desktop App Wrapper
+
+This creates a single executable that launches the Streamlit app like a desktop application.
+
+#### Build Desktop App
+
+```bash
+pyinstaller \
+  --onefile \
+  --windowed \
+  --name QR-Code-Generator \
+  desktop_launcher.py
+```
+
+#### Output
+
+```bash
+dist/
+└── QR-Code-Generator
+```
+
+`Double-click to launch, browser opens automatically no terminal window`
